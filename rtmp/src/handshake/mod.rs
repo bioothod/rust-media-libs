@@ -305,17 +305,15 @@ impl Handshake {
         let received_digest = match get_digest_for_received_packet(&received_packet_1, &p1_key) {
             Ok(digest) => digest,
             Err(HandshakeError{kind: HandshakeErrorKind::UnknownPacket1Format}) => {
-                if version == 0 {
-                    // Since no digest was found and the version is 0, chances are that
-                    // this handshake is not a fp9 handshake but instead is the handshake from the
-                    // original RTMP specification.  If that's the case then this isn't an error,
-                    // we just need to send back an exact copy of their p1 and we are good.
-                    self.current_stage = Stage::WaitingForPacket2;
-                    return Ok(HandshakeProcessResult::InProgress {response_bytes: received_packet_1.to_vec()});
-                }
-
-                // Since version is not zero this is probably not a valid RTMP handshake
-                return Err(HandshakeError{kind: HandshakeErrorKind::UnknownPacket1Format});
+                // No digest has been found, mimic Nginx behaviour and just assume this is original
+                // RTMP message. Comment below shows version==0 check
+                //
+                // Since no digest was found and the version is 0, chances are that
+                // this handshake is not a fp9 handshake but instead is the handshake from the
+                // original RTMP specification.  If that's the case then this isn't an error,
+                // we just need to send back an exact copy of their p1 and we are good.
+                self.current_stage = Stage::WaitingForPacket2;
+                return Ok(HandshakeProcessResult::InProgress {response_bytes: received_packet_1.to_vec()});
             },
             Err(x) => return Err(x),
         };
