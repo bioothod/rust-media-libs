@@ -294,7 +294,7 @@ impl Handshake {
 
         let mut reader = Cursor::new(received_packet_1.as_ref());
         let _ = reader.read_u32::<BigEndian>()?;
-        let version = reader.read_u32::<BigEndian>()?;
+        let _version = reader.read_u32::<BigEndian>()?;
 
         // Test against the expected constant string the peer sent over
         let p1_key = match self.peer_type {
