@@ -63,6 +63,29 @@ pub struct ServerSession {
     bytes_received_since_last_ack: u32,
 }
 
+use std::fmt;
+impl fmt::Debug for ServerSession {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut app_name = "none";
+        if let Some(ref an) = self.connected_app_name {
+            app_name = an;
+        }
+
+        write!(f, "start_time: {:?}, app: {}, outstanding requests: {}, next_req_num: {}, current_state: {:?}, fms: {}, object encoding: {}, streams: {}, next_stream_id: {}, bytes_received: {}, bytes_received_since_last_ack: {}",
+               self.start_time,
+               app_name,
+               self.outstanding_requests.len(),
+               self.next_request_number,
+               self.current_state,
+               self.fms_version,
+               self.object_encoding,
+               self.active_streams.len(),
+               self.next_stream_id,
+               self.bytes_received,
+               self.bytes_received_since_last_ack)
+    }
+}
+
 impl ServerSession {
     /// Creates a new server session.
     ///
