@@ -45,6 +45,7 @@ pub struct StreamMetadata {
     pub audio_codec: Option<String>,
     pub audio_bitrate_kbps: Option<u32>,
     pub audio_sample_rate: Option<u32>,
+    pub audio_sample_size: Option<u32>,
     pub audio_channels: Option<u32>,
     pub audio_is_stereo: Option<bool>,
     pub encoder: Option<String>
@@ -62,6 +63,7 @@ impl StreamMetadata {
             audio_codec: None,
             audio_bitrate_kbps: None,
             audio_sample_rate: None,
+            audio_sample_size: None,
             audio_channels: None,
             audio_is_stereo: None,
             encoder: None
@@ -116,6 +118,11 @@ impl StreamMetadata {
                     None => (),
                 },
 
+                "audiosamplesize" => match value.get_number() {
+                    Some(x) => self.audio_sample_size = Some(x as u32),
+                    None => (),
+                },
+
                 "stereo" => match value.get_boolean() {
                     Some(x) => self.audio_is_stereo = Some(x),
                     None => (),
@@ -126,7 +133,10 @@ impl StreamMetadata {
                     None => (),
                 },
 
-                _ => (),
+                _ => {
+                    println!("got unknown option: {:?} {:?}", key, value);
+                    ()
+                },
             }
         }
     }
