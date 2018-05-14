@@ -16,3 +16,7 @@ Cargo.lock
 cmake-build-debug/
 
 CMakeLists\.txt
+
+tags
+.*.sw*
+*~
