@@ -46,7 +46,12 @@ pub enum ServerSessionErrorKind {
     ActionAttemptedOnInactiveStream {
         action: String,
         stream_id: u32,
-    }
+    },
+
+    #[fail(display = "generic server error '{}'", error)]
+    GenericError {
+        error: String,
+    },
 }
 
 impl fmt::Display for ServerSessionError {
@@ -86,5 +91,11 @@ impl From<MessageSerializationError> for ServerSessionError {
 impl From<MessageDeserializationError> for ServerSessionError {
     fn from(kind: MessageDeserializationError) -> Self {
         ServerSessionError { kind: ServerSessionErrorKind::MessageDeserializationError(kind) }
+    }
+}
+
+impl From<String> for ServerSessionError {
+    fn from(kind: String) -> Self {
+        ServerSessionError { kind: ServerSessionErrorKind::GenericError { error: kind } }
     }
 }
